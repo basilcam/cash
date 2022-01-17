@@ -1,0 +1,2 @@
+
+void evaluate(char *buffer);
