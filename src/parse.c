@@ -1,53 +1,50 @@
-#include "parse.h"
-#include <stdlib.h>
 #include <string.h>
+#include <assert.h>
+#include "parse.h"
 
-int parseline(char *buf, char **argv) {
+void parse_argv_argc(char *buffer, char **argv, size_t *argc) {
     char *delim;
-    int argc;
-    int bg;
 
     // replace trailing \n with space
-    buf[strlen(buf)-1] = ' '; 
+    // todo: safety!
+    buffer[strlen(buffer)-1] = ' ';
 
     // ignore leading spaces
-    while (*buf && (*buf == ' ')) { 
-        buf++;
+    while (*buffer && (*buffer == ' ')) {
+        buffer++;
     }
 
     // build argv
-    argc = 0;
-    while ((delim = strchr(buf, ' '))) {
-        argv[argc++] = buf;
-        *delim = '\0'; 
-        buf = delim + 1;
+    size_t arg_count = 0;
+    while ((delim = strchr(buffer, ' '))) {
+        argv[arg_count++] = buffer;
+        *delim = '\0';
+        buffer = delim + 1;
 
         // ignore trailing spaces
-        while (*buf && (*buf == ' ')) {
-            buf++;
+        while (*buffer && (*buffer == ' ')) {
+            buffer++;
         }
     }
-    argv[argc] = NULL;
+    argv[arg_count] = NULL;
+    *argc = arg_count;
+}
 
-    if (argc == 0) {
-        return 1;
-    }
+bool parse_bg(char **argv, size_t argc) {
+    // todo: add debug-only assertions in libcam
+    assert(argc > 0);
+    bool is_bg = *argv[argc-1] == '&';
 
-    // determine if should run in background
-    // if so, remove & from argv
-    if ((bg = (*argv[argc-1] == '&')) != 0 ) {
+    if (is_bg) {
         argv[--argc] = NULL;
     }
 
-    return bg;
+    return is_bg;
 }
 
-int is_builtin_command(char **argv) {
-    if (!strcmp(argv[0], "quit")) {
-        exit(EXIT_SUCCESS);
+builtin parse_builtin(char **argv) {
+    if (!strcmp(argv[0], "exit")) {
+        return BUILTIN_EXIT;
     }
-    if (!strcmp(argv[0], "&")) {
-        return 1;
-    }
-    return 0;
+    return BUILTIN_NONE;
 }

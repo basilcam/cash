@@ -9,7 +9,8 @@ int main() {
 
     while (1) {
         printf("> ");
-        
+        fflush(stdout);
+
         cam_fgets(buffer, BUFFER_SIZE, stdin);
 
         if (feof(stdin)) {
