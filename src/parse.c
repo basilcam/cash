@@ -2,28 +2,29 @@
 #include <assert.h>
 #include "parse.h"
 
-void parse_argv_argc(char *buffer, char **argv, size_t *argc) {
+void parse_argv_argc(char buffer[BUFFER_SIZE], char *argv[MAX_ARGS], size_t *argc) {
     char *delim;
+    char *cursor = buffer;
 
     // replace trailing \n with space
-    // todo: safety!
+    // todo: why
     buffer[strlen(buffer)-1] = ' ';
 
     // ignore leading spaces
-    while (*buffer && (*buffer == ' ')) {
-        buffer++;
+    while (*cursor && (*cursor == ' ')) {
+        cursor++;
     }
 
     // build argv
     size_t arg_count = 0;
-    while ((delim = strchr(buffer, ' '))) {
-        argv[arg_count++] = buffer;
+    while ((delim = strchr(cursor, ' '))) {
+        argv[arg_count++] = cursor;
         *delim = '\0';
-        buffer = delim + 1;
+        cursor = delim + 1;
 
         // ignore trailing spaces
-        while (*buffer && (*buffer == ' ')) {
-            buffer++;
+        while (*cursor && (*cursor == ' ')) {
+            cursor++;
         }
     }
     argv[arg_count] = NULL;
