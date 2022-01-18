@@ -22,29 +22,31 @@ void evaluate(char buffer[BUFFER_SIZE]) {
         return;
     }
 
-    if (cmd_get_builtin(&cmd) == BUILTIN_NONE) {
-        // execute command in child process
-        pid_t pid;
-        if ((pid = cam_fork()) == 0) {
-            char * const *argv = cmd_get_argv(&cmd);
+    // execute command in child process
+    pid_t pid;
+    if ((pid = cam_fork()) == 0) {
+
+        builtin builtin = cmd_get_builtin(&cmd);
+
+        if (builtin == BUILTIN_NONE) {
+            char *const *argv = cmd_get_argv(&cmd);
             if (execve(argv[0], argv, environ) < 0) {
                 printf("%s: Command not found.\n", argv[0]);
                 exit(EXIT_SUCCESS);
             }
-        }
-
-        // wait for command if not background
-        if (cmd_is_fg_job(&cmd)) {
-            int status;
-            if (waitpid(pid, &status, 0) < 0) {
-                cam_handle_unix_error("waitfg: waitpid error");
-            }
         } else {
-            printf("%d, %s", pid, buffer);
+            handle_builtin(builtin);
         }
+    }
 
+    // wait for command if not background
+    if (cmd_is_fg_job(&cmd)) {
+        // todo: resolve no child processes errno 10
+        int status;
+        if (waitpid(pid, &status, 0) < 0) {
+            cam_handle_unix_error("waitpid error");
+        }
     } else {
-        handle_builtin(cmd_get_builtin(&cmd));
-        // todo: handle builtins the same way as bash... fork always, still handle bg (&)
+        printf("%d, %s", pid, buffer);
     }
 }
