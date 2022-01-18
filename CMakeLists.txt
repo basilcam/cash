@@ -6,7 +6,8 @@ set(CMAKE_C_STANDARD 99)
 add_subdirectory(deps/LibCam)
 
 add_executable(camshell src/evaluate.c
-    src/main.c
-    src/parse.c)
+        src/main.c
+        src/parse.c
+        src/command.c src/builtin.c)
 target_include_directories(camshell PRIVATE src/)
 target_link_libraries(camshell PRIVATE cam)

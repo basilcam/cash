@@ -1,0 +1,43 @@
+
+functionality
+=============
+
+the shell is called camshell, abbreviated cash
+
+the shell should offer the following builtin commands:
+- exit
+- jobs 
+- bg 
+- fg 
+- source
+- kill
+- alias
+- help
+- export
+- echo
+
+the shell should offer the following functionality:
+- pipes for stdin/stdout/stderr (|)
+- pipes to files (>)
+- background jobs (&)
+- boolean expressions (&&, ||)
+- program resolution using PATH
+- .cashrc file
+
+approach
+========
+
+research how bash works
+
+create a data structure to represent a given command
+- use a class-style struct
+    - consider using decorators
+- break commands up into linked commands by booleans / pipes / 
+  semicolons
+- use enum for builtins
+
+maintain internal list of jobs
+
+maintain internal list of aliases
+
+
