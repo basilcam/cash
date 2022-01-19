@@ -25,7 +25,7 @@ bool cmd_is_bg_job(command *cmd);
 
 bool cmd_is_fg_job(command *cmd);
 
-enum builtin cmd_get_builtin(command *cmd);
+builtin cmd_get_builtin(command *cmd);
 
 char * const *cmd_get_argv(command *cmd);
 

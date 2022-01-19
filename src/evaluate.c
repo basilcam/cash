@@ -1,14 +1,13 @@
-#include <unistd.h>
+#define _GNU_SOURCE
 #include <stdlib.h>
+#include <unistd.h>
 #include <stdio.h>
-#include <cam/sys/process.h>
 #include <sys/wait.h>
+#include <cam/sys/process.h>
 #include "evaluate.h"
 #include "consts.h"
 #include "parse.h"
 #include "command.h"
-
-extern char **environ;
 
 void evaluate(char buffer[BUFFER_SIZE]) {
     command cmd;
@@ -22,26 +21,25 @@ void evaluate(char buffer[BUFFER_SIZE]) {
         return;
     }
 
-    // execute command in child process
+    // handle builtins immediately
+    builtin builtin = cmd_get_builtin(&cmd);
+    if (builtin != BUILTIN_NONE) {
+        handle_builtin(builtin);
+        return;
+    }
+
+    // run command in child process
     pid_t pid;
     if ((pid = cam_fork()) == 0) {
-
-        builtin builtin = cmd_get_builtin(&cmd);
-
-        if (builtin == BUILTIN_NONE) {
-            char *const *argv = cmd_get_argv(&cmd);
-            if (execve(argv[0], argv, environ) < 0) {
-                printf("%s: Command not found.\n", argv[0]);
-                exit(EXIT_SUCCESS);
-            }
-        } else {
-            handle_builtin(builtin);
+        char *const *argv = cmd_get_argv(&cmd);
+        if (execvpe(argv[0], argv, environ) < 0) {
+            printf("%s: Command not found.\n", argv[0]);
+            exit(EXIT_FAILURE);
         }
     }
 
     // wait for command if not background
     if (cmd_is_fg_job(&cmd)) {
-        // todo: resolve no child processes errno 10
         int status;
         if (waitpid(pid, &status, 0) < 0) {
             cam_handle_unix_error("waitpid error");
