@@ -32,6 +32,7 @@ void evaluate(char buffer[BUFFER_SIZE]) {
     pid_t pid;
     if ((pid = cam_fork()) == 0) {
         char *const *argv = cmd_get_argv(&cmd);
+        // todo: add execvpe to libcam
         if (execvpe(argv[0], argv, environ) < 0) {
             printf("%s: Command not found.\n", argv[0]);
             exit(EXIT_FAILURE);

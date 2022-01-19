@@ -27,7 +27,7 @@ bool cmd_is_fg_job(command *cmd) {
     return is_fg;
 }
 
-enum builtin cmd_get_builtin(command *cmd) {
+builtin cmd_get_builtin(command *cmd) {
     return cmd->builtin;
 }
 

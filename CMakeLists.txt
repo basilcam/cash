@@ -7,5 +7,5 @@ add_executable(camshell src/evaluate.c
         src/main.c
         src/parse.c
         src/command.c src/builtin.c)
-target_include_directories(camshell PRIVATE src/)
+target_include_directories(camshell PRIVATE include/)
 target_link_libraries(camshell PRIVATE cam)
