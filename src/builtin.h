@@ -3,11 +3,11 @@
 
 #include <stdlib.h>
 
-typedef enum builtin {
+typedef enum {
     BUILTIN_NONE,
     BUILTIN_EXIT
 } builtin;
 
 void handle_builtin(builtin builtin);
 
-#endif //CAMSHELL_BUILTIN_H
+#endif // CAMSHELL_BUILTIN_H

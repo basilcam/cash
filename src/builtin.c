@@ -4,15 +4,13 @@
 void handle_exit();
 
 // todo: this will need to be updated to take argv/argc
-void handle_builtin(builtin builtin) {
-    switch (builtin) {
-        BUILTIN_EXIT:
+void handle_builtin(builtin abuiltin) {
+    switch (abuiltin) {
+        case BUILTIN_EXIT:
             handle_exit();
             break;
-        BUILTIN_NONE:
-        default:
-            // todo: throw a warning
-            return;
+        case BUILTIN_NONE:
+            break;
     }
 }
 

@@ -44,7 +44,7 @@ bool parse_bg(char **argv, size_t argc) {
 }
 
 builtin parse_builtin(char **argv) {
-    if (!strcmp(argv[0], "exit")) {
+    if (strcmp(argv[0], "exit") == 0) {
         return BUILTIN_EXIT;
     }
     return BUILTIN_NONE;
