@@ -10,6 +10,7 @@ void handle_builtin(builtin abuiltin) {
             handle_exit();
             break;
         case BUILTIN_NONE:
+        default:
             break;
     }
 }

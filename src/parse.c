@@ -7,7 +7,6 @@ void parse_argv_argc(char buffer[BUFFER_SIZE], char *argv[MAX_ARGS], size_t *arg
     char *cursor = buffer;
 
     // replace trailing \n with space
-    // todo: why
     buffer[strlen(buffer)-1] = ' ';
 
     // ignore leading spaces
