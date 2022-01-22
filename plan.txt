@@ -4,24 +4,25 @@ functionality
 
 the shell is called camshell, abbreviated cash
 
-the shell should offer the following builtin commands:
-- exit
-- jobs 
-- bg 
-- fg 
-- source
-- kill
-- alias
-- help
-- export
-- echo
-
 the shell should offer the following functionality:
-- pipes for stdin/stdout/stderr (|)
-- pipes to files (>)
-- background jobs (&)
+- when the user types ctrl+c, a SIGINT is forwareded to all fg processes
+- when the user types ctrl+z, a SIGSTP is forwareded to all fg processes
+- when a process terminates due to an uncaught signal, the shell should reap each child proces.
+- jobs ending with a & should be run in the bg
+- support for the following builtin commands:
+    - exit
+    - jobs 
+    - bg 
+    - fg 
+    - source
+    - kill
+    - alias
+    - help
+    - export
+    - echo
 - boolean expressions (&&, ||)
-- program resolution using PATH
+- pipes to files (>)
+- pipes for stdin/stdout/stderr (|)
 - .cashrc file
 
 approach
@@ -29,15 +30,15 @@ approach
 
 research how bash works
 
-create a data structure to represent a given command
-- use a class-style struct
-    - consider using decorators
-- break commands up into linked commands by booleans / pipes / 
-  semicolons
-- use enum for builtins
 
-maintain internal list of jobs
+create a job data structure 
+- it contains one process, job state (fg, bg), etc
+- can eventually be extended to include multiple processes, pipes, etc
+
+create a command data structure
+
+maintain internal list of background jobs and <=1 foreground job
 
 maintain internal list of aliases
 
-
+. 
