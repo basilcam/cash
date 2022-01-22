@@ -8,7 +8,6 @@
 // do not access struct elements outside command.c
 // they're only here to allow declarations
 typedef struct {
-    char buffer[BUFFER_SIZE];
     char *argv[MAX_ARGS];
     size_t argc;
     bool is_bg;
@@ -21,15 +20,15 @@ void cmd_init(command *cmd,
               bool (*parse_bg)(char *argv[MAX_ARGS], size_t argc),
               builtin (*parse_builtin)(char **argv));
 
-bool cmd_is_bg_job(command *cmd);
+bool cmd_is_bg_job(const command *cmd);
 
-bool cmd_is_fg_job(command *cmd);
+bool cmd_is_fg_job(const command *cmd);
 
-builtin cmd_get_builtin(command *cmd);
+builtin cmd_get_builtin(const command *cmd);
 
-char * const *cmd_get_argv(command *cmd);
+char * const *cmd_get_argv(const command *cmd);
 
-size_t cmd_get_argc(command *cmd);
+size_t cmd_get_argc(const command *cmd);
 
 #endif // CAMSHELL_COMMAND_H
 
