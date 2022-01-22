@@ -17,4 +17,6 @@ void jobs_add(pid_t pid, command *cmd);
 
 void jobs_print();
 
+job *jobs_get_fg_job();
+
 #endif // CAMSHELL_JOBS_H
