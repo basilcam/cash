@@ -4,7 +4,6 @@
 #include "command.h"
 
 static job jobs[MAX_JOBS];
-
 static size_t next_job_id = 1;
 
 static void copy_command_string(const command *cmd, char buf[BUFFER_SIZE]) {
@@ -46,5 +45,9 @@ void jobs_print() {
             printf("[%zu] %d    %s    %s\n", j.jid, j.pid, "TODO", j.command);
         }
     }
+}
+
+job *jobs_get_fg_job() {
+    // todo
 }
 

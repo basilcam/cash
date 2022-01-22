@@ -3,9 +3,12 @@
 #include <cam/sys/io.h>
 #include "consts.h"
 #include "evaluate.h"
+#include "signals.h"
 
 int main() {
     char buffer[BUFFER_SIZE];
+
+    signals_install_handlers();
 
     while (1) {
         printf("> ");
