@@ -3,9 +3,10 @@
 
 void signals_install_handlers();
 
+void signals_uninstall_handlers();
+
 void signals_block();
 
 void signals_unblock();
-
 
 #endif // CAMSHELL_SIGNALS_H

@@ -30,14 +30,16 @@ void parse_argv_argc(char buffer[BUFFER_SIZE], char *argv[MAX_ARGS], size_t *arg
     *argc = arg_count;
 }
 
-bool parse_bg(char **argv, size_t argc) {
+bool parse_bg(char **argv, size_t *argc) {
     // todo: add debug-only assertions in libcam
-    assert(argc > 0);
-    bool is_bg = *argv[argc-1] == '&';
+    assert(*argc > 0);
+    bool is_bg = *argv[*argc-1] == '&';
 
     if (is_bg) {
-        argv[--argc] = NULL;
+        argv[*argc-1] = NULL;
     }
+
+    *argc = *argc - 1;
 
     return is_bg;
 }
@@ -45,6 +47,12 @@ bool parse_bg(char **argv, size_t argc) {
 builtin parse_builtin(char **argv) {
     if (strcmp(argv[0], "exit") == 0) {
         return BUILTIN_EXIT;
+    } else if (strcmp(argv[0], "jobs") == 0) {
+        return BUILTIN_JOBS;
+    } else if (strcmp(argv[0], "fg") == 0) {
+        return BUILTIN_FG;
+    } else if (strcmp(argv[0], "bg") == 0) {
+        return BUILTIN_BG;
     }
     return BUILTIN_NONE;
 }

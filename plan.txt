@@ -5,8 +5,8 @@ functionality
 the shell is called camshell, abbreviated cash
 
 the shell should offer the following functionality:
-- when the user types ctrl+c, a SIGINT is forwareded to all fg processes
-- when the user types ctrl+z, a SIGSTP is forwareded to all fg processes
+- when the user types ctrl+c, a SIGINT is forwarded to all fg processes
+- when the user types ctrl+z, a SIGSTP is forwarded to all fg processes
 - when a process terminates due to an uncaught signal, the shell should reap each child proces.
 - jobs ending with a & should be run in the bg
 - support for the following builtin commands:
@@ -28,17 +28,12 @@ the shell should offer the following functionality:
 approach
 ========
 
-research how bash works
+remember to block signals when accessing global stores in async-signal-safe handlers. also be careful around
+the fork calls
+
+signals are sent to the entire foreground process group (to cover spawned children). when we fork a process,
+the pgid needs to be updated. otherwise it'd be the same as the shell's pgid and we'd kill the shell
+
+we should restore signal handlers to the default after forking
 
 
-create a job data structure 
-- it contains one process, job state (fg, bg), etc
-- can eventually be extended to include multiple processes, pipes, etc
-
-create a command data structure
-
-maintain internal list of background jobs and <=1 foreground job
-
-maintain internal list of aliases
-
-. 
