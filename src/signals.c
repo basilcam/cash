@@ -21,16 +21,17 @@ static void signals_sigchld_handler() {
     pid_t pid;
 
     while ((pid = waitpid(-1, &status, WNOHANG)) > 0) {
-        if (WIFEXITED(status)) {
-            cam_sio_puts("normal term\n");
+        if (WIFEXITED(status)) { // terminated normally
             signals_block();
             jobs_remove(pid);
             signals_unblock();
-        } else {
-            cam_sio_puts("unexpected termination of child process ");
-            cam_sio_putl(pid);
-            cam_sio_puts(", ");
-            cam_sio_putl(status);
+        } else if (WIFSIGNALED(status)) { // terminated due to signal, print info
+            signals_block();
+            job *j = jobs_get_from_pid(pid);
+            cam_sio_puts("[");
+            cam_sio_putl((long) job_get_jid(j));
+            cam_sio_puts("]   Killed            ");
+            cam_sio_puts(job_get_command(j));
             cam_sio_puts("\n");
         }
     }

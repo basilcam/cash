@@ -49,12 +49,18 @@ job *jobs_add(pid_t pid, command *cmd) {
 }
 
 void jobs_remove(pid_t pid) {
+    job *j = jobs_get_from_pid(pid);
+    assert(j != NULL);
+    clear_job(j);
+}
+
+job *jobs_get_from_pid(pid_t pid) {
     for (size_t i = 0; i < MAX_JOBS; i++) {
         if (jobs[i].pid == pid) {
-            clear_job(&jobs[i]);
-            break;
+            return &jobs[i];
         }
     }
+    return NULL;
 }
 
 void jobs_print() {
@@ -66,7 +72,12 @@ void jobs_print() {
 }
 
 job *jobs_get_fg_job() {
-    // todo
+    for (size_t i = 0; i < MAX_JOBS; i++) {
+        if (jobs[i].state == JOB_STATE_FG) {
+            return &jobs[i];
+        }
+    }
+    return NULL;
 }
 
 const char *job_get_command(job *j) {
