@@ -23,9 +23,15 @@ static void copy_command_string(const command *cmd, char buf[BUFFER_SIZE]) {
     *buf_pos++ = '\0';
 }
 
+static void clear_job(job *j) {
+    j->pid = 0;
+    j->jid = 0;
+    j->state = JOB_STATE_INVALID;
+}
+
 void jobs_init() {
     for (size_t i = 0; i < MAX_JOBS; i++) {
-        jobs[i].jid = 0;
+        clear_job(&jobs[i]);
     }
 }
 
@@ -36,7 +42,7 @@ job *jobs_add(pid_t pid, command *cmd) {
     job *j = &jobs[jid];
     j->pid = pid;
     j->jid = jid;
-    j->is_bg = cmd_is_bg_job(cmd);
+    j->state = cmd_is_bg_job(cmd) ? JOB_STATE_BG : JOB_STATE_FG;
     copy_command_string(cmd, j->command);
 
     return j;
@@ -44,18 +50,17 @@ job *jobs_add(pid_t pid, command *cmd) {
 
 void jobs_remove(pid_t pid) {
     for (size_t i = 0; i < MAX_JOBS; i++) {
-        job j = jobs[i];
-        if (j.pid == pid) {
-            j.jid = 0;
+        if (jobs[i].pid == pid) {
+            clear_job(&jobs[i]);
+            break;
         }
     }
 }
 
 void jobs_print() {
     for (size_t i = 0; i < next_job_id; i++) {
-        job j = jobs[i];
-        if (j.jid != 0) {
-            printf("[%zu] %d    %s    %s\n", j.jid, j.pid, "TODO", j.command);
+        if (jobs[i].state != JOB_STATE_INVALID) {
+            printf("[%zu] %d    %s    %s\n", jobs[i].jid, jobs[i].pid, "TODO", jobs[i].command);
         }
     }
 }
@@ -79,7 +84,7 @@ size_t job_get_jid(job *j) {
     return j->jid;
 }
 
-bool job_is_bg(job *j) {
+job_state job_get_state(job *j) {
     assert(j != NULL);
-    return j->is_bg;
+    return j->state;
 }

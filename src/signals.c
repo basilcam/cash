@@ -22,6 +22,7 @@ static void signals_sigchld_handler() {
 
     while ((pid = waitpid(-1, &status, WNOHANG)) > 0) {
         if (WIFEXITED(status)) {
+            cam_sio_puts("normal term\n");
             signals_block();
             jobs_remove(pid);
             signals_unblock();
