@@ -23,6 +23,8 @@ job *jobs_add(pid_t pid, command *cmd);
 
 void jobs_remove(pid_t pid);
 
+job *jobs_get_from_pid(pid_t pid);
+
 void jobs_print();
 
 job *jobs_get_fg_job();
