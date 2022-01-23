@@ -37,9 +37,8 @@ bool parse_bg(char **argv, size_t *argc) {
 
     if (is_bg) {
         argv[*argc-1] = NULL;
+        *argc = *argc - 1;
     }
-
-    *argc = *argc - 1;
 
     return is_bg;
 }

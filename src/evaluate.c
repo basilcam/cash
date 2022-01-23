@@ -2,15 +2,25 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
-#include <sys/wait.h>
 #include <cam/sys/process.h>
-#include <cam/error.h>
+#include <cam/sys/signal.h>
 #include "evaluate.h"
 #include "consts.h"
 #include "parse.h"
 #include "command.h"
 #include "jobs.h"
 #include "signals.h"
+
+void wait_on_fg_job(job *j) {
+    sigset_t set;
+    cam_sigemptyset(&set);
+
+    // wait for fg job to finish
+    while (job_get_state(j) == JOB_STATE_FG)
+    {
+        cam_sigsuspend(&set);
+    }
+}
 
 void evaluate(char buffer[BUFFER_SIZE]) {
     command cmd;
@@ -54,12 +64,7 @@ void evaluate(char buffer[BUFFER_SIZE]) {
     // wait for command if not background
     if (cmd_is_fg_job(&cmd)) {
         signals_unblock();
-
-        // todo: don't use waitpid here. rely entirely on SIGCHLD handler for this
-        int status;
-        if (waitpid(pid, &status, 0) < 0) {
-            cam_handle_unix_error("waitpid error");
-        }
+        wait_on_fg_job(j);
     } else {
         printf("%d, %s", job_get_pid(j), job_get_command(j));
         signals_unblock();
