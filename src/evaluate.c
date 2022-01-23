@@ -10,6 +10,7 @@
 #include "parse.h"
 #include "command.h"
 #include "jobs.h"
+#include "signals.h"
 
 void evaluate(char buffer[BUFFER_SIZE]) {
     command cmd;
@@ -26,37 +27,41 @@ void evaluate(char buffer[BUFFER_SIZE]) {
     // handle builtins immediately
     builtin builtin = cmd_get_builtin(&cmd);
     if (builtin != BUILTIN_NONE) {
-        handle_builtin(builtin);
+        builtin_handle(builtin);
         return;
     }
 
-    // todo: block signals around this -> prevent race condition where child process terminates and we handle the resulting SIGCHLD before adding job to list / waiting
+    signals_block();
 
     // run command in child process
     pid_t pid;
     if ((pid = cam_fork()) == 0) { // child process
-        // todo: unblock signals
-        // todo: restore signal handlers to default
+        signals_uninstall_handlers();
+        signals_unblock();
+        setpgrp(); // shouldn't be in same process group as shell
 
         char * const *argv = cmd_get_argv(&cmd);
+
         // todo: add execvpe to libcam
         if (execvpe(argv[0], argv, environ) < 0) {
             printf("%s: Command not found.\n", argv[0]);
             exit(EXIT_FAILURE);
         }
-    } else { // parent process
-        jobs_add(pid, &cmd);
     }
 
-    // todo: unblock signals
+    job *j = jobs_add(pid, &cmd);
 
     // wait for command if not background
     if (cmd_is_fg_job(&cmd)) {
+        signals_unblock();
+
+        // todo: don't use waitpid here. rely entirely on SIGCHLD handler for this
         int status;
         if (waitpid(pid, &status, 0) < 0) {
             cam_handle_unix_error("waitpid error");
         }
     } else {
-        printf("%d, %s", pid, buffer);
+        printf("%d, %s", job_get_pid(j), job_get_command(j));
+        signals_unblock();
     }
 }

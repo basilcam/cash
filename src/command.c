@@ -6,13 +6,13 @@
 void cmd_init(command *cmd,
               char buffer[BUFFER_SIZE],
               void (*parse_argv_argc)(char buffer[BUFFER_SIZE], char *argv[MAX_ARGS], size_t *argc),
-              bool (*parse_bg)(char *argv[MAX_ARGS], size_t argc),
+              bool (*parse_bg)(char *argv[MAX_ARGS], size_t *argc),
               builtin (*parse_builtin)(char **argv)) {
     parse_argv_argc(buffer, cmd->argv, &cmd->argc);
     if (cmd->argc == 0) {
         return;
     }
-    cmd->is_bg = parse_bg(cmd->argv, cmd->argc);
+    cmd->is_bg = parse_bg(cmd->argv, &cmd->argc);
     cmd->builtin = parse_builtin(cmd->argv);
 }
 

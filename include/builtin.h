@@ -5,9 +5,13 @@
 
 typedef enum {
     BUILTIN_NONE,
-    BUILTIN_EXIT
+    BUILTIN_EXIT,
+    BUILTIN_JOBS,
+    BUILTIN_FG,
+    BUILTIN_BG,
+    BUILTIN_CD
 } builtin;
 
-void handle_builtin(builtin builtin);
+void builtin_handle(builtin builtin);
 
 #endif // CAMSHELL_BUILTIN_H

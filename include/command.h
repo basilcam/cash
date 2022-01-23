@@ -17,7 +17,7 @@ typedef struct {
 void cmd_init(command *cmd,
               char buffer[BUFFER_SIZE],
               void (*parse_argv_argc)(char buffer[BUFFER_SIZE], char *argv[MAX_ARGS], size_t *argc),
-              bool (*parse_bg)(char *argv[MAX_ARGS], size_t argc),
+              bool (*parse_bg)(char *argv[MAX_ARGS], size_t *argc),
               builtin (*parse_builtin)(char **argv));
 
 bool cmd_is_bg_job(const command *cmd);
