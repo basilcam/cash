@@ -36,4 +36,17 @@ the pgid needs to be updated. otherwise it'd be the same as the shell's pgid and
 
 we should restore signal handlers to the default after forking
 
+notes
+=====
+
+the clion terminal does not support sending signals (i.e. sigint, sigtstp). you must start from an actual terminal
+
+todo
+====
+
+fix bug where new command line is printed before terminated fg output is printed
+
+implement remaining builtins
+
+update libcam wrappers
 
