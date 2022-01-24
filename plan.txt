@@ -44,7 +44,9 @@ the clion terminal does not support sending signals (i.e. sigint, sigtstp). you 
 todo
 ====
 
-fix bug where new command line is printed before terminated fg output is printed
+handle stop signals
+
+keep track of last bg job, add +/- to bg job termination log
 
 implement remaining builtins
 

@@ -66,7 +66,7 @@ void evaluate(char buffer[BUFFER_SIZE]) {
         signals_unblock();
         wait_on_fg_job(j);
     } else {
-        printf("%d, %s", job_get_pid(j), job_get_command(j));
+        printf("[%zu], %d\n", job_get_jid(j), job_get_pid(j));
         signals_unblock();
     }
 }
