@@ -14,8 +14,6 @@ the shell should offer the following functionality:
     - jobs 
     - bg 
     - fg 
-    - source
-    - kill
     - alias
     - help
     - export
@@ -23,7 +21,6 @@ the shell should offer the following functionality:
 - boolean expressions (&&, ||)
 - pipes to files (>)
 - pipes for stdin/stdout/stderr (|)
-- .cashrc file
 
 approach
 ========
@@ -46,7 +43,19 @@ todo
 
 keep track of last bg job, add +/- to bg job termination log
 
+allow jid/pid to be specified for fg/bg commands
+
 implement remaining builtins
+- help
+- export
+- cd
+- echo
+- source
+- alias
 
 update libcam wrappers
+
+implement file redirection
+
+implement pipes
 
