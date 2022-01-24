@@ -9,6 +9,7 @@
 typedef enum {
     JOB_STATE_BG,
     JOB_STATE_FG,
+    JOB_STATE_STOPPED,
     JOB_STATE_INVALID,
 } job_state;
 
@@ -19,9 +20,13 @@ typedef struct {
     job_state state;
 } job;
 
+void jobs_init();
+
 job *jobs_add(pid_t pid, command *cmd);
 
-void jobs_remove(pid_t pid);
+void jobs_remove(job *j);
+
+void job_stop(job *j);
 
 job *jobs_get_from_pid(pid_t pid);
 
@@ -36,7 +41,5 @@ pid_t job_get_pid(job *j);
 size_t job_get_jid(job *j);
 
 job_state job_get_state(job *j);
-
-bool job_is_valid(job *j);
 
 #endif // CAMSHELL_JOBS_H

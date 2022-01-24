@@ -16,37 +16,38 @@ static void forwarding_handler(int signum) {
     cam_kill(-job->pid, signum); // forward signal to fg process group
 }
 
+static void print_status(job *j, const char *reason) {
+    cam_sio_puts("[");
+    cam_sio_putl((long) job_get_jid(j));
+    cam_sio_puts("]   ");
+    cam_sio_puts(reason);
+    cam_sio_puts(job_get_command(j));
+    cam_sio_puts("\n");
+}
+
 static void sigchld_handler() {
     int status;
     pid_t pid;
 
-    while ((pid = waitpid(-1, &status, WNOHANG)) > 0) {
+    while ((pid = waitpid(-1, &status, WNOHANG | WUNTRACED)) > 0) {
         signals_block();
 
         job *j = jobs_get_from_pid(pid);
         job_state state = job_get_state(j);
-        if (state == JOB_STATE_BG) {
-            cam_sio_puts("[");
-            cam_sio_putl((long) job_get_jid(j));
-            cam_sio_puts("]   ");
 
-            if (WIFEXITED(status)) {
-                cam_sio_puts("Done            ");
-            } else if (WIFSIGNALED(status)) {
-                cam_sio_puts("Killed          ");
-            } else {
-                cam_sio_puts("Unknown         ");
+        if (WIFEXITED(status)) {
+            if (state == JOB_STATE_BG) {
+                print_status(j, "Done            ");
             }
-
-            cam_sio_puts(job_get_command(j));
-            cam_sio_puts("\n");
-        } else if (state == JOB_STATE_FG) {
-            if (WIFSIGNALED(status)) {
-                cam_sio_puts("Killed\n");
-            }
+            jobs_remove(j);
+        } else if (WIFSIGNALED(status)) {
+            print_status(j, "Killed          ");
+            jobs_remove(j);
+        } else if (WIFSTOPPED(status)) {
+            print_status(j, "Stopped         ");
+            job_stop(j);
         }
 
-        jobs_remove(pid);
         signals_unblock();
     }
 }

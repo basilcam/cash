@@ -4,11 +4,13 @@
 #include "consts.h"
 #include "evaluate.h"
 #include "signals.h"
+#include "jobs.h"
 
 int main() {
     char buffer[BUFFER_SIZE];
 
     signals_install_handlers();
+    jobs_init();
 
     while (1) {
         printf("> ");

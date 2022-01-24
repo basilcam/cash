@@ -48,10 +48,12 @@ job *jobs_add(pid_t pid, command *cmd) {
     return j;
 }
 
-void jobs_remove(pid_t pid) {
-    job *j = jobs_get_from_pid(pid);
-    assert(j != NULL);
+void jobs_remove(job *j) {
     clear_job(j);
+}
+
+void job_stop(job *j) {
+    j->state = JOB_STATE_STOPPED;
 }
 
 job *jobs_get_from_pid(pid_t pid) {
@@ -66,7 +68,15 @@ job *jobs_get_from_pid(pid_t pid) {
 void jobs_print() {
     for (size_t i = 0; i < next_job_id; i++) {
         if (jobs[i].state != JOB_STATE_INVALID) {
-            printf("[%zu] %d    %s    %s\n", jobs[i].jid, jobs[i].pid, "TODO", jobs[i].command);
+            printf("[%zu] %d    ", jobs[i].jid, jobs[i].pid);
+            if (jobs[i].state == JOB_STATE_BG) {
+                printf("Running        ");
+            } else if (jobs[i].state == JOB_STATE_STOPPED) {
+                printf("Stopped        ");
+            } else {
+                printf("ERROR          ");
+            }
+            printf("%s\n", jobs[i].command);
         }
     }
 }
