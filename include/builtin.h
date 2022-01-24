@@ -2,16 +2,8 @@
 #define CAMSHELL_BUILTIN_H
 
 #include <stdlib.h>
+#include "command.h"
 
-typedef enum {
-    BUILTIN_NONE,
-    BUILTIN_EXIT,
-    BUILTIN_JOBS,
-    BUILTIN_FG,
-    BUILTIN_BG,
-    BUILTIN_CD
-} builtin;
-
-void builtin_handle(builtin builtin);
+void builtin_handle(cmd_type type);
 
 #endif // CAMSHELL_BUILTIN_H

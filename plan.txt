@@ -9,7 +9,7 @@ the shell should offer the following functionality:
 - when the user types ctrl+z, a SIGSTP is forwarded to all fg processes
 - when a process terminates due to an uncaught signal, the shell should reap each child proces.
 - jobs ending with a & should be run in the bg
-- support for the following builtin commands:
+- support for the following cmd_type commands:
     - exit
     - jobs 
     - bg 
