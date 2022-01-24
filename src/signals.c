@@ -4,7 +4,7 @@
 #include "signals.h"
 #include "jobs.h"
 
-static void signals_forwarding_handler(int signum) {
+static void forwarding_handler(int signum) {
     signals_block(); // block signals to be async-signal-safe when accessing global variables
     job *job = jobs_get_fg_job();
     signals_unblock();
@@ -16,31 +16,45 @@ static void signals_forwarding_handler(int signum) {
     cam_kill(-job->pid, signum); // forward signal to fg process group
 }
 
-static void signals_sigchld_handler() {
+static void sigchld_handler() {
     int status;
     pid_t pid;
 
     while ((pid = waitpid(-1, &status, WNOHANG)) > 0) {
-        if (WIFEXITED(status)) { // terminated normally
-            signals_block();
-            jobs_remove(pid);
-            signals_unblock();
-        } else if (WIFSIGNALED(status)) { // terminated due to signal, print info
-            signals_block();
-            job *j = jobs_get_from_pid(pid);
+        signals_block();
+
+        job *j = jobs_get_from_pid(pid);
+        job_state state = job_get_state(j);
+        if (state == JOB_STATE_BG) {
             cam_sio_puts("[");
             cam_sio_putl((long) job_get_jid(j));
-            cam_sio_puts("]   Killed            ");
+            cam_sio_puts("]   ");
+
+            if (WIFEXITED(status)) {
+                cam_sio_puts("Done            ");
+            } else if (WIFSIGNALED(status)) {
+                cam_sio_puts("Killed          ");
+            } else {
+                cam_sio_puts("Unknown         ");
+            }
+
             cam_sio_puts(job_get_command(j));
             cam_sio_puts("\n");
+        } else if (state == JOB_STATE_FG) {
+            if (WIFSIGNALED(status)) {
+                cam_sio_puts("Killed\n");
+            }
         }
+
+        jobs_remove(pid);
+        signals_unblock();
     }
 }
 
 void signals_install_handlers() {
-    cam_signal(SIGINT, signals_forwarding_handler);
-    cam_signal(SIGTSTP, signals_forwarding_handler);
-    cam_signal(SIGCHLD, signals_sigchld_handler);
+    cam_signal(SIGINT, forwarding_handler);
+    cam_signal(SIGTSTP, forwarding_handler);
+    cam_signal(SIGCHLD, sigchld_handler);
 }
 
 void signals_uninstall_handlers() {
