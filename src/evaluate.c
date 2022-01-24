@@ -38,7 +38,7 @@ void evaluate(char buffer[BUFFER_SIZE]) {
     // handle builtins immediately
     cmd_type type = cmd_get_type(&cmd);
     if (type != BUILTIN_PROGRAM) {
-        builtin_handle(type);
+        builtin_handle(&cmd);
         return;
     }
 

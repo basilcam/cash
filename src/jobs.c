@@ -3,6 +3,7 @@
 #include <assert.h>
 #include "jobs.h"
 #include "command.h"
+#include "signals.h"
 
 static job jobs[MAX_JOBS];
 static size_t next_job_id = 1;
@@ -54,6 +55,34 @@ void jobs_remove(job *j) {
 
 void job_stop(job *j) {
     j->state = JOB_STATE_STOPPED;
+}
+
+void job_resume_in_fg(job *j) {
+    // todo: assert there's no existing fg job
+    if (j->state == JOB_STATE_STOPPED) {
+        signals_resume(j->pid);
+    }
+    j->state = JOB_STATE_FG;
+}
+
+void job_resume_in_bg(job *j) {
+    if (j->state == JOB_STATE_STOPPED) {
+        signals_resume(j->pid);
+    }
+    j->state = JOB_STATE_BG;
+}
+
+job *jobs_get_from_jid(size_t jid) {
+    if (jid >= MAX_JOBS) {
+        return NULL;
+    }
+
+    job *j = &jobs[jid];
+    if (j->state == JOB_STATE_INVALID) {
+        return NULL;
+    }
+
+    return j;
 }
 
 job *jobs_get_from_pid(pid_t pid) {

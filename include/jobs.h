@@ -28,6 +28,12 @@ void jobs_remove(job *j);
 
 void job_stop(job *j);
 
+void job_resume_in_fg(job *j);
+
+void job_resume_in_bg(job *j);
+
+job *jobs_get_from_jid(size_t jid);
+
 job *jobs_get_from_pid(pid_t pid);
 
 void jobs_print();
