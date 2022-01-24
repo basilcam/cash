@@ -22,8 +22,6 @@ void cmd_init(command *cmd,
 
 bool cmd_is_bg_job(const command *cmd);
 
-bool cmd_is_fg_job(const command *cmd);
-
 builtin cmd_get_builtin(const command *cmd);
 
 char * const *cmd_get_argv(const command *cmd);
