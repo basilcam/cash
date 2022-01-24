@@ -20,12 +20,6 @@ bool cmd_is_bg_job(const command *cmd) {
     return cmd->is_bg;
 }
 
-bool cmd_is_fg_job(const command *cmd) {
-    bool is_bg = cmd->is_bg;
-    bool is_fg = !is_bg;
-    return is_fg;
-}
-
 builtin cmd_get_builtin(const command *cmd) {
     return cmd->builtin;
 }

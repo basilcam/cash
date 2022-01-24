@@ -62,7 +62,7 @@ void evaluate(char buffer[BUFFER_SIZE]) {
     job *j = jobs_add(pid, &cmd);
 
     // wait for command if not background
-    if (cmd_is_fg_job(&cmd)) {
+    if (!cmd_is_bg_job(&cmd)) {
         signals_unblock();
         wait_on_fg_job(j);
     } else {
