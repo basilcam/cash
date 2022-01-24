@@ -85,3 +85,7 @@ void signals_unblock() {
 
     cam_sigprocmask(CAM_SIGHOW_UNBLOCK, &set, NULL);
 }
+
+void signals_resume(pid_t pid) {
+    cam_kill(-pid, SIGCONT);
+}

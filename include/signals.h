@@ -9,4 +9,6 @@ void signals_block();
 
 void signals_unblock();
 
+void signals_resume(pid_t pid);
+
 #endif // CAMSHELL_SIGNALS_H
