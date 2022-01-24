@@ -13,8 +13,8 @@ static void handle_jobs() {
 }
 
 // todo: this will need to be updated to take argv/argc
-void builtin_handle(builtin abuiltin) {
-    switch (abuiltin) {
+void builtin_handle(cmd_type type) {
+    switch (type) {
         case BUILTIN_EXIT:
             handle_exit();
             break;
@@ -31,7 +31,7 @@ void builtin_handle(builtin abuiltin) {
         case BUILTIN_CD:
             // todo
             break;
-        case BUILTIN_NONE:
+        case BUILTIN_PROGRAM:
         default:
             break;
     }

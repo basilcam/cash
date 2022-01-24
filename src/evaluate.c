@@ -10,6 +10,7 @@
 #include "command.h"
 #include "jobs.h"
 #include "signals.h"
+#include "builtin.h"
 
 void wait_on_fg_job(job *j) {
     sigset_t set;
@@ -35,9 +36,9 @@ void evaluate(char buffer[BUFFER_SIZE]) {
     }
 
     // handle builtins immediately
-    builtin builtin = cmd_get_builtin(&cmd);
-    if (builtin != BUILTIN_NONE) {
-        builtin_handle(builtin);
+    cmd_type type = cmd_get_type(&cmd);
+    if (type != BUILTIN_PROGRAM) {
+        builtin_handle(type);
         return;
     }
 

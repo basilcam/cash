@@ -43,7 +43,7 @@ bool parse_bg(char **argv, size_t *argc) {
     return is_bg;
 }
 
-builtin parse_builtin(char **argv) {
+cmd_type parse_builtin(char **argv) {
     if (strcmp(argv[0], "exit") == 0) {
         return BUILTIN_EXIT;
     } else if (strcmp(argv[0], "jobs") == 0) {
@@ -53,5 +53,5 @@ builtin parse_builtin(char **argv) {
     } else if (strcmp(argv[0], "bg") == 0) {
         return BUILTIN_BG;
     }
-    return BUILTIN_NONE;
+    return BUILTIN_PROGRAM;
 }
